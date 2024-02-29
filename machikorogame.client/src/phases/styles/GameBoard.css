@@ -1,0 +1,12 @@
+#GameBoard {
+    width: 1000px;
+    height: 800px;
+    background-color: brown;
+}
+
+#LeaveGameBtn {
+    width: 40px;
+    height: 40px;
+    margin-left: 950px;
+    margin-top: 10px;
+}

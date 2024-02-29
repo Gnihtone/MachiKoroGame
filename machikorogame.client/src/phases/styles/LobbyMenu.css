@@ -1,0 +1,32 @@
+#LobbyMenu {
+    width: 800px;
+    height: 800px;
+    background-color: brown;
+}
+
+.goodstuff {
+    font-size: 20px;
+    padding-top: 20px;
+}
+
+#buttons {
+    width: 400px;
+    float: left;
+}
+
+.LobbyBtn {
+    width: 200px;
+    height: 80px;
+    margin-left: 0px;
+}
+
+#StartGameBtn {
+    margin-top: 400px;
+}
+
+#Players {
+    width: 400px;
+    height: 690px;
+    margin-left: 400px;
+    background-color: blue;
+}

@@ -11,7 +11,11 @@ namespace MachiKoroGame.Server.Controllers
         [HttpGet(Name="GetUserInfo")]
         public User Get(string id)
         {
-            return PostgresDBController.Singleton.GetUserByCookie(id);
+            var user = PostgresDBController.Singleton.GetUserByCookie(id);
+            if (user == null)
+            {
+                return PostgresDBController.Singleton.CreateUser(id, id);
+            }
         }
 
         [HttpPost(Name="UpdateUserLobby")]

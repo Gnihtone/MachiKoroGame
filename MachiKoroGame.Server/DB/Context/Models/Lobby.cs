@@ -1,4 +1,4 @@
-﻿namespace MachiKoroGame.Server.Models
+﻿namespace MachiKoroGame.Server.DB.Context.Models
 {
     public class Lobby
     {

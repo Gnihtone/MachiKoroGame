@@ -1,6 +1,6 @@
-﻿namespace MachiKoroGame.Server.Models
+﻿namespace MachiKoroGame.Server.DB.Context.Models
 {
-    public class User
+    public class UserInfo
     {
         public string Id { get; set; }
         public string? CurrentLobbyId { get; set; }

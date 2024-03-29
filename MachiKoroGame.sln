@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachiKoroGame.Server", "MachiKoroGame.Server\MachiKoroGame.Server.csproj", "{5BC9D74F-B4E4-43F0-A033-6340197CEE65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MachiKoroGame.Server", "MachiKoroGame.Server\MachiKoroGame.Server.csproj", "{5BC9D74F-B4E4-43F0-A033-6340197CEE65}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "machikorogame.client", "machikorogame.client\machikorogame.client.esproj", "{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketServer", "WebsocketServer\WebsocketServer.csproj", "{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

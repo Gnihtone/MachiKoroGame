@@ -4,11 +4,11 @@ using MachiKoroGame.Server.DB;
 
 namespace MachiKoroGame.Server.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("user")]
     public class UserController : ControllerBase
     {
-        [HttpGet(Name="GetUserInfo")]
+        [HttpGet("Get")]
         public User Get(string id)
         {
             var user = PostgresDBController.Singleton.GetUserByCookie(id);
@@ -16,9 +16,10 @@ namespace MachiKoroGame.Server.Controllers
             {
                 return PostgresDBController.Singleton.CreateUser(id, id);
             }
+            return user;
         }
 
-        [HttpPost(Name="UpdateUserLobby")]
+        [HttpPost("UpdateLobby")]
         public Lobby UpdateCurrentLobby(string user_id, string? lobby_id = null, string? password = null)
         {
             if (lobby_id == null)

@@ -2,25 +2,25 @@
 using MachiKoroGame.Server.Models;
 using MachiKoroGame.Server.DB;
 
-namespace MachiKoroGame.Server.Controllers
+namespace MachiKoroGame.Server.Controller
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("user")]
     public class LobbyController : ControllerBase
     {
-        [HttpPost(Name="CreateNewLobby")]
-        public Lobby Create(string? password=null)
+        [HttpPost("Create")]
+        public Lobby Create(string name, int max_players, string? password=null)
         {
-            return PostgresDBController.Singleton.CreateLobby(password);
+            return PostgresDBController.Singleton.CreateLobby(name, max_players, password);
         }
 
-        [HttpPost(Name="StartGame")]
+        [HttpPost("Start")]
         public bool Start()
         {
             return true;
         }
 
-        [HttpPost(Name="ConnectToTheGame")]
+        [HttpPost("Connect")]
         public bool Connect(string id)
         {
             return true;

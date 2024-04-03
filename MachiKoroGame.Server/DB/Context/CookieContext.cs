@@ -15,7 +15,7 @@ namespace MachiKoroGame.Server.DB.Contexts
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=maindb;Username=postgres;Password=пароль_от_postgres");
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=maindb;Username=postgres;Password=123qaz123");
         }
     }
 }

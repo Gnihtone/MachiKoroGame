@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace MachiKoroGame.Server
 {
@@ -9,11 +10,20 @@ namespace MachiKoroGame.Server
 
             // Add services to the container.
 
+            builder.Services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+            builder.Services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            
             var app = builder.Build();
 
             app.UseDefaultFiles();
@@ -25,8 +35,11 @@ namespace MachiKoroGame.Server
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors(builder => builder.WithOrigins("*")
+                                .AllowAnyMethod()
+                                .AllowAnyHeader());
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

@@ -4,15 +4,46 @@ import MainMenu from "./MainMenu";
 import LobbyMenu from './LobbyMenu';
 
 export default function MainLobbyMenu({updatePhase, game_state}) {
+    const user_id = game_state.state.user_id;
+
     function returnToMainMenu() {
         updatePhase(MainMenu);
     }
 
-    function handleCreationOfLobby(event) {
+    async function handleCreationOfLobby(event) {
         event.preventDefault();
         const form = event.target;
         const formData = new FormData(form);
-        console.log(Object.fromEntries(formData.entries()));
+        var entries = Object.fromEntries(formData.entries());
+        console.log(entries);
+        var requestOptions = {
+            mode: 'cors',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                name: entries.lobbyName,
+                max_players: parseInt(entries.amountOfPlayers),
+                password: entries.lobbyPassword
+            })
+        };
+        var data = await (await fetch('http://localhost:5044/api/lobby/create', requestOptions)).json()
+        console.log(data);
+        var lobby_id = data['id'];
+
+        const user_id2 = (await (await fetch(`http://localhost:5044/api/user/get?id=${user_id}`)).json())['id'];
+        console.log(user_id2);
+
+        requestOptions = {
+            mode: 'cors',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                user_id: user_id2,
+                lobby_id: lobby_id,
+                password: entries.lobbyPassword
+            })
+        };
+        await fetch('http://localhost:5044/api/user/updatelobby', requestOptions)
         updatePhase(LobbyMenu);
     }
 

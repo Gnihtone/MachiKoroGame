@@ -35,14 +35,19 @@ namespace MachiKoroGame.Server.DB
             db.UsersCookies.Add(new Context.Models.UserCookieId { CookieId = cookie_id, Id = id });
             db.UsersInfo.Add(new Context.Models.UserInfo { CurrentLobbyId = null, Id = id });
             db.SaveChanges();
+            Console.WriteLine("OK1");
             return new User { CurrentLobbyId = null, Id = id };
         }
 
         public User? GetUserByCookie(string id)
         {
             CookieContext db = new CookieContext();
-            var userId = db.UsersCookies.First(user => user.CookieId == id)?.Id;
-            if (userId == null)
+            string? userId;
+            try
+            {
+                userId = db.UsersCookies.First(user => user.CookieId == id)?.Id;
+            }
+            catch (InvalidOperationException ex)
             {
                 return null;
             }
@@ -82,16 +87,52 @@ namespace MachiKoroGame.Server.DB
             };
         }
 
+        public Models.Lobby? GetLobbyById(string lobbyId)
+        {
+            CookieContext db = new CookieContext();
+            var lobby = db.Lobbies.FirstOrDefault(lobby => lobby.Id == lobbyId);
+            if (lobby == null)
+            {
+                return null;
+            }
+            return new Models.Lobby
+            {
+                Id = lobby.Id,
+                Name = lobby.Name,
+                Password = lobby.Password,
+                MaxPlayers = lobby.MaxPlayers,
+                CurrentPlayers = lobby.CurrentPlayers,
+                IsInGame = lobby.IsInGame,
+                Players = lobby.Players
+            };
+        }
+
+        public bool StartLobby(string lobbyId)
+        {
+            CookieContext db = new CookieContext();
+            var lobby = db.Lobbies.FirstOrDefault(lobby => lobby.Id == lobbyId);
+            if (lobby == null || lobby.IsInGame)
+            {
+                return false;
+            }
+
+            lobby.IsInGame = true;
+            db.Lobbies.Update(lobby);
+            db.SaveChanges();
+
+            return true;
+        }
+
         public Models.Lobby? JoinLobby(string user_id, string password, string lobby_id)
         {
             CookieContext db = new CookieContext();
             var lobby = db.Lobbies.First(lobby => lobby.Id == lobby_id);
-            if (lobby == null || lobby.Password == password || lobby.CurrentPlayers == lobby.MaxPlayers || lobby.Players.Contains(user_id))
+            if (lobby == null || lobby.Password != password || lobby.CurrentPlayers == lobby.MaxPlayers || lobby.Players.Contains(user_id))
             {
                 return null;
             }
-            lobby.Players[lobby.CurrentPlayers] = user_id;
-            db.Update(lobby);
+            lobby.Players[lobby.CurrentPlayers++] = user_id;
+            db.Lobbies.Update(lobby);
 
             var user = db.UsersInfo.First(user => user.Id == user_id);
             user.CurrentLobbyId = lobby_id;
@@ -114,7 +155,7 @@ namespace MachiKoroGame.Server.DB
         public bool LeaveLobby(string user_id)
         {
             CookieContext db = new CookieContext();
-            var lobby_id = db.UsersInfo.First(user => user.Id == user_id)?.CurrentLobbyId;
+            var lobby_id = db.UsersInfo.FirstOrDefault(user => user.Id == user_id, null)?.CurrentLobbyId;
             if (lobby_id == null) { 
                 return false; 
             }

@@ -69,20 +69,12 @@ namespace WebsocketServer
 
         protected void SendBadMsg()
         {
-            var msg = new SocketServerMessage
-            {
-                type = "bad"
-            };
-            Send(JsonSerializer.Serialize(msg));
+            SendMsg("bad");
         }
 
         protected void SendOkMsg()
         {
-            var msg = new SocketServerMessage
-            {
-                type = "ok"
-            };
-            Send(JsonSerializer.Serialize(msg));
+            SendMsg("ok");
         }
 
         protected string? SendRequest(HttpRequestMessage request)
@@ -101,7 +93,7 @@ namespace WebsocketServer
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"{httpServer}/lobby/getinfo?lobby_id={lobbyId}");
             var response = SendRequest(request);
-            if (response == null)
+            if (response == null || response == "")
             {
                 return null;
             }
@@ -142,6 +134,17 @@ namespace WebsocketServer
                 else
                 {
                     SendOkMsg();
+                    lobbies.TryAdd(lobbyId, new HashSet<Common>());
+                    lobbies[lobbyId].Add(this);
+
+                    var lobby = GetLobbyInfo();
+                    if (lobby == null)
+                    {
+                        return;
+                    }
+                    string type = "lobby_update";
+                    string message = "[" + string.Join(", ", lobby.players) + "]";
+                    SendChanges(lobbyId, type, message);
                 }
             }
         }
@@ -169,20 +172,20 @@ namespace WebsocketServer
             request.Content = new StringContent($"{{\"user_id\": \"{userId}\"}}", Encoding.UTF8, "application/json");
             SendRequest(request);
 
-            string type = "lobby_update";
             var lobby = GetLobbyInfo();
             if (lobby == null)
             {
                 return;
             }
-            string message = lobby.Players.ToString();
+            string type = "lobby_update";
+            string message = "[" + string.Join(", ", lobby.players) + "]";
             SendChanges(lobbyId, type, message);
         }
 
         private void HandleStart()
         {
             var lobby = GetLobbyInfo();
-            if (lobby?.CurrentPlayers == 1)
+            if (lobby?.currentPlayers == 1)
             {
                 var msg = new SocketServerMessage
                 {
@@ -192,21 +195,15 @@ namespace WebsocketServer
             }
             else
             {
-                var msg = new SocketServerMessage
-                {
-                    type = "ok"
-                };
-
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{httpServer}/lobby/start?lobby_id={lobbyId}");
                 if (bool.Parse(SendRequest(request)))
                 {
-                    Send(JsonSerializer.Serialize(msg));
+                    SendOkMsg();
                     SendChanges(lobbyId, "start", "");
                 }
                 else
                 {
-                    msg.type = "bad";
-                    Send(JsonSerializer.Serialize(msg));
+                    SendBadMsg();
                 }
             }
         }

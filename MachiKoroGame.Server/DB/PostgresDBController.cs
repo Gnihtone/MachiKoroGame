@@ -155,7 +155,15 @@ namespace MachiKoroGame.Server.DB
         public bool LeaveLobby(string user_id)
         {
             CookieContext db = new CookieContext();
-            var lobby_id = db.UsersInfo.FirstOrDefault(user => user.Id == user_id, null)?.CurrentLobbyId;
+            string? lobby_id;
+            try
+            {
+                lobby_id = db.UsersInfo.First(user => user.Id == user_id)?.CurrentLobbyId;
+            }
+            catch (InvalidOperationException ex)
+            {
+                return false;
+            }
             if (lobby_id == null) { 
                 return false; 
             }
@@ -176,10 +184,36 @@ namespace MachiKoroGame.Server.DB
                     break;
                 }
             }
-            db.Lobbies.Update(lobby);
-            db.SaveChanges();
+            try
+            {
+                if (lobby.CurrentPlayers == 0)
+                {
+                    db.Lobbies.Remove(lobby);
+                }
+                else
+                {
+                    db.Lobbies.Update(lobby);
+                }
+                db.SaveChanges();
+            } 
+            catch
+            {
+                return false;
+            }
 
             return true;
+        }
+    
+        public List<LobbyCommonInfo> GetLobbies()
+        {
+            CookieContext db = new CookieContext();
+            var lobbies = db.Lobbies;
+            List<LobbyCommonInfo> lobbyCommonInfos = new List<LobbyCommonInfo>();
+            foreach (var lobby in lobbies) 
+            {
+                lobbyCommonInfos.Add(new LobbyCommonInfo { Id = lobby.Id, CurrentPlayers = lobby.CurrentPlayers, MaxPlayers = lobby.MaxPlayers, Name = lobby.Name });
+            }
+            return lobbyCommonInfos;
         }
     }
 }

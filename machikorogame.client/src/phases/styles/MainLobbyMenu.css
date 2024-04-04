@@ -32,6 +32,10 @@ input.lobbyPassword {
     width: 100px;
 }
 
+input.lobby {
+    float:left;
+}
+
 #JoinLobby {
     background-color: black;    
     margin-left: 350px;

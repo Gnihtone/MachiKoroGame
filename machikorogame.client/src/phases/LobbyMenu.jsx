@@ -30,6 +30,9 @@ export default function LobbyMenu({updatePhase, game_state}) {
             return;
         } else if (msg['type'] == 'hello') {
             sendMessage(socket, "hello", "", game_state);
+        } else if (msg['type'] == 'start') {
+            socket.close(1000, "Game started");
+            updatePhase(GameBoard);
         }
     }
 
@@ -39,8 +42,7 @@ export default function LobbyMenu({updatePhase, game_state}) {
     }
 
     function StartGame() {  
-        socket.close(1000, "Game started");
-        updatePhase(GameBoard);
+        sendMessage(socket, "start", "", game_state);
     }
 
     return (

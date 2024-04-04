@@ -7,26 +7,34 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MachiKoroGame.Server", "Mac
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "machikorogame.client", "machikorogame.client\machikorogame.client.esproj", "{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketServer", "WebsocketServer\WebsocketServer.csproj", "{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketServer", "WebsocketServer\WebsocketServer.csproj", "{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Fullproject|Any CPU = Fullproject|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5BC9D74F-B4E4-43F0-A033-6340197CEE65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5BC9D74F-B4E4-43F0-A033-6340197CEE65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BC9D74F-B4E4-43F0-A033-6340197CEE65}.Fullproject|Any CPU.ActiveCfg = Fullproject|Any CPU
+		{5BC9D74F-B4E4-43F0-A033-6340197CEE65}.Fullproject|Any CPU.Build.0 = Fullproject|Any CPU
 		{5BC9D74F-B4E4-43F0-A033-6340197CEE65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BC9D74F-B4E4-43F0-A033-6340197CEE65}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Fullproject|Any CPU.ActiveCfg = Fullproject|Any CPU
+		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Fullproject|Any CPU.Build.0 = Fullproject|Any CPU
+		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Fullproject|Any CPU.Deploy.0 = Fullproject|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7AA0E573-2A8A-4CDA-98D6-074A7BF5A61A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Fullproject|Any CPU.ActiveCfg = Fullproject|Any CPU
+		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Fullproject|Any CPU.Build.0 = Fullproject|Any CPU
 		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5166AA1-3DAF-4D46-A2A6-4C323F1A043A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

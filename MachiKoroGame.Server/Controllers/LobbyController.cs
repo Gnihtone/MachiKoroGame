@@ -16,18 +16,24 @@ namespace MachiKoroGame.Server.Controller
     [ApiController]
     public class LobbyController : ControllerBase
     {
+        [HttpGet("GetInfo")]
+        public Lobby? GetLobby(string lobby_id)
+        {
+            return PostgresDBController.Singleton.GetLobbyById(lobby_id);
+        }
+
+        [HttpGet("GetLobbies")]
+        public List<LobbyCommonInfo> GetLobbies()
+        {
+            return PostgresDBController.Singleton.GetLobbies();
+        }
+
         [HttpPost("Create")]
         public Lobby Create()
         {
             var str = new StreamReader(Request.Body).ReadToEnd();
             var data = JsonSerializer.Deserialize<LobbyCreationInfo>(str);
             return PostgresDBController.Singleton.CreateLobby(data.name, data.max_players, data.password);
-        }
-
-        [HttpGet("GetInfo")]
-        public Lobby? GetLobby(string lobby_id)
-        {
-            return PostgresDBController.Singleton.GetLobbyById(lobby_id);
         }
 
         [HttpPost("Start")]

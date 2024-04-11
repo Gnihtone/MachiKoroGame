@@ -15,9 +15,14 @@
             return;
         }
 
-        public override void OnBuild(Player player)
+        public override bool OnBuild(Player player)
         {
+            if (player.UpgradedShops)
+            {
+                return false;
+            }
             player.UpgradedShops = true;
+            return true;
         }
 
         public override Card GetNewCard()

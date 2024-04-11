@@ -40,9 +40,9 @@ namespace WebsocketServer.Game.Cards
 
         public abstract void OnUse(GameBoard board, Player player, Player other = null);
 
-        public virtual void OnBuild(Player player)
+        public virtual bool OnBuild(Player player)
         {
-            return;
+            return true;
         }
 
         public bool CheckRollIsOk(int roll)

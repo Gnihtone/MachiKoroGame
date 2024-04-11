@@ -10,6 +10,19 @@
         public override int RollMax { get; set; } = 6;
         public override bool NeedToChoose { get; set; } = false;
 
+        public override bool OnBuild(Player player)
+        {
+            int val = 0;
+            if (player.cards.TryGetValue(this, out val))
+            {
+                if (val == 1)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public override void OnUse(GameBoard board, Player player, Player other)
         {
             foreach (Player player1 in board.players)

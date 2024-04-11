@@ -2,6 +2,7 @@
 using WebsocketServer.Models;
 using WebsocketServer.Game;
 using WebSocketSharp;
+using System.Text.Json;
 
 namespace WebsocketServer.Servers
 {
@@ -10,6 +11,39 @@ namespace WebsocketServer.Servers
     {
         private static Dictionary<string, GameBoard> game_boards_ = new Dictionary<string, GameBoard>();
         GameBoard? board;
+
+        private void SendPlayerInfo()
+        {
+            Dictionary<string, int> buildings = new Dictionary<string, int>();
+            foreach (var kv in board.availableCards)
+            {
+                buildings[kv.Key.Name] = kv.Value;
+            }
+            List<PlayerModel> players = new List<PlayerModel>();
+            foreach (var player in board.players)
+            {
+                Dictionary<string, int> cards = new Dictionary<string, int>();
+                foreach (var card in player.cards)
+                {
+                    cards.Add(card.Key.Name, card.Value);
+                }
+                players.Add(new PlayerModel() {
+                    Id = player.Id,
+                    Money = player.Money,
+                    Cards = cards
+                });
+            }
+
+            BoardModel boardModel = new BoardModel() { 
+                CurrentPlayerId = board.CurrentPlayer.Id,
+                CurrentMoveType = (int)board.CurrentMove,
+                AvailableBuildings = buildings,
+                Players = players,
+            };
+            string msg = JsonSerializer.Serialize(boardModel);
+
+            SendChanges(lobbyId, "maininfo", msg);
+        }
 
         private void SendWrongMsg()
         {
@@ -52,6 +86,7 @@ namespace WebsocketServer.Servers
             {
                 SendChanges(lobbyId, "start", "");
                 board.Start();
+                SendPlayerInfo();
             }
         }
 
@@ -100,7 +135,9 @@ namespace WebsocketServer.Servers
             if (!board.Continue())
             {
                 SendWrongMsg();
+                return;
             }
+            SendPlayerInfo();
         }
 
         private bool HandleCommon()

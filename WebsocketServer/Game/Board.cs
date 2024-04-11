@@ -96,8 +96,11 @@ namespace WebsocketServer.Game
             { 
                 return false;
             }
+            if (!card.OnBuild(CurrentPlayer))
+            {
+                return false;
+            }
             CurrentPlayer.Money -= card.Cost;
-            card.OnBuild(CurrentPlayer);
             if (availableCards.ContainsKey(card))
             {
                 if (!CurrentPlayer.cards.TryAdd(card, 1))

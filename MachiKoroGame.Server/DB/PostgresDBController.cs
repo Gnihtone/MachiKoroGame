@@ -211,7 +211,10 @@ namespace MachiKoroGame.Server.DB
             List<LobbyCommonInfo> lobbyCommonInfos = new List<LobbyCommonInfo>();
             foreach (var lobby in lobbies) 
             {
-                lobbyCommonInfos.Add(new LobbyCommonInfo { Id = lobby.Id, CurrentPlayers = lobby.CurrentPlayers, MaxPlayers = lobby.MaxPlayers, Name = lobby.Name });
+                if (!lobby.IsInGame)
+                {
+                    lobbyCommonInfos.Add(new LobbyCommonInfo { Id = lobby.Id, CurrentPlayers = lobby.CurrentPlayers, MaxPlayers = lobby.MaxPlayers, Name = lobby.Name });
+                }
             }
             return lobbyCommonInfos;
         }

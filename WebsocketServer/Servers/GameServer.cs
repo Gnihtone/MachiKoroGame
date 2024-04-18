@@ -10,6 +10,7 @@ namespace WebsocketServer.Servers
     internal class GameServer : Common
     {
         private static Dictionary<string, GameBoard> game_boards_ = new Dictionary<string, GameBoard>();
+        static Dictionary<string, HashSet<Common>> lobbies = new Dictionary<string, HashSet<Common>>();
         GameBoard? board;
 
         private void SendPlayerInfo()
@@ -30,7 +31,11 @@ namespace WebsocketServer.Servers
                 players.Add(new PlayerModel() {
                     Id = player.Id,
                     Money = player.Money,
-                    Cards = cards
+                    Cards = cards,
+                    HasMall = player.UpgradedShops,
+                    HasPark = player.ContinueOnDuble,
+                    HasRadio = player.CanReroll,
+                    HasStation = player.CanRollTwo,
                 });
             }
 
@@ -42,7 +47,7 @@ namespace WebsocketServer.Servers
             };
             string msg = JsonSerializer.Serialize(boardModel);
 
-            SendChanges(lobbyId, "maininfo", msg);
+            SendChanges(lobbies, lobbyId, "maininfo", msg);
         }
 
         private void SendWrongMsg()
@@ -76,6 +81,8 @@ namespace WebsocketServer.Servers
 
         private void HandleHello()
         {
+            lobbies.TryAdd(lobbyId, new HashSet<Common>());
+            lobbies[lobbyId].Add(this);
             if (board.IsStarted)
             {
                 return;
@@ -84,7 +91,7 @@ namespace WebsocketServer.Servers
             board.OnlinePlayers++;
             if (board.OnlinePlayers == board.MaxPlayers)
             {
-                SendChanges(lobbyId, "start", "");
+                SendChanges(lobbies, lobbyId, "start", "");
                 board.Start();
                 SendPlayerInfo();
             }
@@ -212,6 +219,7 @@ namespace WebsocketServer.Servers
 
             if (lobbyId != null)
             {
+                lobbies[lobbyId].Remove(this);
                 game_boards_[lobbyId].OnlinePlayers--;
             }
         }

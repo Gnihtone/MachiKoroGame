@@ -23,8 +23,6 @@ namespace WebsocketServer.Servers
     {
         protected static readonly HttpClient client = new HttpClient();
 
-        protected static Dictionary<string, HashSet<Common>> lobbies = new Dictionary<string, HashSet<Common>>();
-
         protected string? lobbyId;
         protected string? userId;
         protected SocketClientMessage? lastMessage;
@@ -44,7 +42,7 @@ namespace WebsocketServer.Servers
             Send(JsonSerializer.Serialize(msg));
         }
 
-        protected static void SendChanges(string? lobby_id, string type, string message, string? extra = null)
+        protected static void SendChanges(Dictionary<string?, HashSet<Common>> lobbies, string? lobby_id, string type, string message, string? extra = null)
         {
             if (!lobbies.ContainsKey(lobby_id))
             {
@@ -132,17 +130,6 @@ namespace WebsocketServer.Servers
                 else
                 {
                     SendOkMsg();
-                    lobbies.TryAdd(lobbyId, new HashSet<Common>());
-                    lobbies[lobbyId].Add(this);
-
-                    var lobby = GetLobbyInfo();
-                    if (lobby == null)
-                    {
-                        return;
-                    }
-                    string type = "lobby_update";
-                    string message = "[" + string.Join(", ", lobby.players) + "]";
-                    SendChanges(lobbyId, type, message);
                 }
             }
         }
@@ -150,10 +137,6 @@ namespace WebsocketServer.Servers
         protected override void OnClose(CloseEventArgs e)
         {
             base.OnClose(e);
-            if (lobbyId is not null)
-            {
-                lobbies[lobbyId].Remove(this);
-            }
         }
     }
 }

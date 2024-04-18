@@ -7,6 +7,7 @@ namespace WebsocketServer.Game
         private static List<Card> _allCards = new List<Card>()
         {
             new WheatFieldCard(),
+            new Farm(),
             new BakeryCard(),
             new AppleOrchad(),
             new Cafe(),
@@ -61,13 +62,13 @@ namespace WebsocketServer.Game
 
             foreach (Card card in _allCards)
             {
-                availableCards.Add(card, 6);
+                availableCards.TryAdd(card, 6);
             }
 
             foreach (Player player in players)
             {
-                player.cards.Add(_allCards[0], 1);
-                player.cards.Add(_allCards[1], 1);
+                player.cards.TryAdd(_allCards[0], 1);
+                player.cards.TryAdd(_allCards[1], 1);
             }
         }
 

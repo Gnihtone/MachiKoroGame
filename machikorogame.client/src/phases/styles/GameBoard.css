@@ -1,4 +1,7 @@
 #GameBoard {
+    position: absolute;
+    left: 10%;
+    top: 10%;
     width: 1000px;
     height: 800px;
     background-color: brown;
@@ -9,4 +12,93 @@
     height: 40px;
     margin-left: 950px;
     margin-top: 10px;
+}
+
+.card {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    width: 70px;
+    height: 140px;
+    margin: 10px;
+    padding: 0px;
+}
+
+img.card {
+    margin: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+p.card {
+    color: black;
+    position: absolute;
+    left: -9px;
+    top: -17px;
+    opacity: 1;
+}
+
+.amount {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0px;
+
+}
+
+.cardBackground {
+    position: absolute;
+    left: 0;
+    top: -10px;
+    width: 103%;
+    height: 20%;
+    background-color: gray;
+    opacity: 0.7;
+}
+
+#GamePlace {
+    position: absolute;
+    top: 50px;
+    width: 400px;
+    height: 700px;
+}
+
+#PlayerPlace {
+    position: absolute;
+    left: 400px;
+    top: 50px;
+    width: 500px;
+    height: 600px;
+}
+
+#PlayerCards {
+    position: absolute;
+    left: 0;
+    top: 60px;
+    width: 500px;
+}
+
+#Money {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 50px;
+}
+
+#Money p {
+    position: relative;
+    font-size: 30px;
+    top: -25px;
+    left: 27px;
+    color: black;
+}
+
+#Money img {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 50px;
+    height: 50px;
 }

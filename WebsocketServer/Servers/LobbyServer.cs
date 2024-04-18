@@ -7,6 +7,7 @@ namespace WebsocketServer.Servers
     internal class LobbyServer : Common
     {
         private bool safe_exit = false;
+        static Dictionary<string, HashSet<Common>> lobbies = new Dictionary<string, HashSet<Common>>();
 
         private void HandleExit()
         {
@@ -26,7 +27,7 @@ namespace WebsocketServer.Servers
             }
             string type = "lobby_update";
             string message = "[" + string.Join(", ", lobby.players) + "]";
-            SendChanges(lobbyId, type, message);
+            SendChanges(lobbies, lobbyId, type, message);
             if (lobbyId == null)
             {
                 return;
@@ -62,7 +63,7 @@ namespace WebsocketServer.Servers
                         }
                     }
                     SendOkMsg();
-                    SendChanges(lobbyId, "start", "");
+                    SendChanges(lobbies, lobbyId, "start", "");
                     safe_exit = true;
                 }
                 else
@@ -83,11 +84,29 @@ namespace WebsocketServer.Servers
             {
                 HandleStart();
             }
+            else if (lastMessage?.type == "hello")
+            {
+                lobbies.TryAdd(lobbyId, new HashSet<Common>());
+                lobbies[lobbyId].Add(this);
+
+                var lobby = GetLobbyInfo();
+                if (lobby == null)
+                {
+                    return;
+                }
+                string type = "lobby_update";
+                string message = "[" + string.Join(", ", lobby.players) + "]";
+                SendChanges(lobbies, lobbyId, type, message);
+            }
         }
 
         protected override void OnClose(CloseEventArgs e)
         {
             base.OnClose(e);
+            if (lobbyId is not null)
+            {
+                lobbies[lobbyId].Remove(this);
+            }
             if (!safe_exit)
             {
                 HandleExit();

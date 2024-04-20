@@ -168,7 +168,16 @@ namespace MachiKoroGame.Server.DB
                 return false; 
             }
 
-            var lobby = db.Lobbies.First(lobby => lobby.Id == lobby_id);
+            Context.Models.Lobby lobby;
+            try
+            {
+                lobby = db.Lobbies.First(lobby => lobby.Id == lobby_id);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return false;
+            }
+            
             if (lobby == null || !lobby.Players.Contains(user_id))
             {
                 return false;

@@ -27,8 +27,8 @@
 img.card {
     margin: 0px;
     position: absolute;
-    left: 0px;
-    top: 0px;
+    left: -1px;
+    top: -1px;
 }
 
 p.card {
@@ -79,6 +79,12 @@ p.card {
     width: 500px;
 }
 
+#PlayerSights {
+    position: absolute;
+    top: 550px;
+    left: 0px;
+}
+
 #Money {
     position: absolute;
     top: 0;
@@ -101,4 +107,73 @@ p.card {
     left: 10px;
     width: 50px;
     height: 50px;
+}
+
+#ChangePlayer {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 650px;
+    left:800px;
+}
+
+#YourId {
+    position: absolute;
+    left: 400px;
+}
+
+#MovingPlayerId {
+    position: absolute;
+}
+
+.rad1 {
+    position: relative;
+    color: black;
+    left: 0px;
+    top:0px;
+}
+
+.playerCheck {
+    width: 13px;
+    height: 13px;
+    margin-bottom: 10px;
+}
+
+p.waiting {
+    position: absolute;
+    top: 250px;
+    left: 100px;
+    font-size: 30px;
+}
+
+#LastRoll {
+    position: absolute;
+    top: 700px;
+    left: 50px;
+}
+
+.Roll1 {
+    position: relative;
+    top:200px;
+    width: 200px;
+    height: 50px;
+    text-align: center;
+}
+
+.Roll2 {
+    position: relative;
+    top: 110px;
+    width: 200px;
+    height: 50px;
+    text-align: center;
+}
+
+.Continue {
+    position: relative;
+    top: 110px;
+}
+
+.Continue2 {
+    position: relative;
+    top: 110px;
 }

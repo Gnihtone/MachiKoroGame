@@ -7,8 +7,8 @@ namespace WebsocketServer.Game
         private static List<Card> _allCards = new List<Card>()
         {
             new WheatFieldCard(),
-            new Farm(),
             new BakeryCard(),
+            new Farm(),
             new AppleOrchad(),
             new Cafe(),
             new CheeseFactory(),
@@ -176,10 +176,6 @@ namespace WebsocketServer.Game
 
             bool OnBuild()
             {
-                if (!builtSomething)
-                {
-                    return false;
-                }
                 UpdateMove();
 
                 return true;

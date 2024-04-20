@@ -13,6 +13,11 @@ namespace WebsocketServer.Servers
         static Dictionary<string, HashSet<Common>> lobbies = new Dictionary<string, HashSet<Common>>();
         GameBoard? board;
 
+        private void SendAll(string type, string msg)
+        {
+            SendChanges(lobbies, lobbyId, type, msg);
+        }
+
         private void SendPlayerInfo()
         {
             Dictionary<string, int> buildings = new Dictionary<string, int>();
@@ -32,10 +37,13 @@ namespace WebsocketServer.Servers
                     Id = player.Id,
                     Money = player.Money,
                     Cards = cards,
-                    HasMall = player.UpgradedShops,
-                    HasPark = player.ContinueOnDuble,
-                    HasRadio = player.CanReroll,
-                    HasStation = player.CanRollTwo,
+                    Sights = new Sights()
+                    {
+                        mall = player.UpgradedShops,
+                        park = player.ContinueOnDuble,
+                        radio = player.CanReroll,
+                        station = player.CanRollTwo,
+                    },
                 });
             }
 
@@ -99,7 +107,17 @@ namespace WebsocketServer.Servers
 
         private void HandleRoll()
         {
-            if (board.CurrentMove != MoveType.Income || board.CurrentRollNum != 1)
+            if (board.CurrentMove != MoveType.Income || board.CurrentRollNum != 1 && board.CurrentRollNum != 2)
+            {
+                SendWrongMsg();
+                return;
+            }
+            if (board.CurrentRollNum == 2 && !board.CurrentPlayer.CanReroll)
+            {
+                SendWrongMsg();
+                return;
+            }
+            if (lastMessage.message == "2" && !board.CurrentPlayer.CanRollTwo)
             {
                 SendWrongMsg();
                 return;
@@ -107,28 +125,8 @@ namespace WebsocketServer.Servers
             if (lastMessage.message == "1" || lastMessage.message == "2")
             {
                 board.RollDices(int.Parse(lastMessage.message));
-                board.CurrentRollNum = 2;
-                SendMsg("roll", $"{board.LastRoll}");
-            }
-            else
-            {
-                SendWrongMsg();
-            }
-            return;
-        }
-
-        private void HandleReroll()
-        {
-            if (board.CurrentMove != MoveType.Income || board.CurrentRollNum != 2)
-            {
-                SendWrongMsg();
-                return;
-            }
-            if (lastMessage.message == "1" || lastMessage.message == "2")
-            {
-                board.RollDices(int.Parse(lastMessage.message));
-                board.CurrentRollNum = 3;
-                SendMsg("reroll", $"{board.LastRoll}");
+                board.CurrentRollNum++;
+                SendAll("roll", $"{board.LastRoll}");
             }
             else
             {
@@ -197,9 +195,6 @@ namespace WebsocketServer.Servers
             {
                 case "roll":
                     HandleRoll();
-                    break;
-                case "reroll":
-                    HandleReroll(); 
                     break;
                 case "build":
                     HandleBuild();

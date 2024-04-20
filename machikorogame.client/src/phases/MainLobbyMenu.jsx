@@ -119,9 +119,9 @@ export default function MainLobbyMenu({updatePhase, game_state}) {
                 
                 {lobbies.map((input, idx) => {
                     return (
-                        <div key={idx}>
-                            <input type='radio' className="lobby" name={input.name} onChange={() => setChosenLobby(input.id)}></input>
-                            <label htmlFor={input.name}>{input.name}</label>
+                        <div className="rad">
+                            <input type='radio' className="lobby" checked={chosenLobby == input.id} name={input.name} onChange={() => setChosenLobby(input.id)}></input>
+                            <label>{input.name}</label>
                         </div>
                     )
                 })}

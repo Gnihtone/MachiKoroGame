@@ -27,8 +27,8 @@ class App extends React.Component {
             user_id: cookies.get('user_id') || null,
             volume: cookies.get('volume') || 50,
             music: cookies.get('music') || 50,
-            // phaseRef: onOpenPage
-            phaseRef: MainMenu
+            phaseRef: onOpenPage
+            // phaseRef: MainMenu
         };
 
         this.updatePhase = this.updatePhase.bind(this);

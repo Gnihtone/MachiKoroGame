@@ -76,6 +76,13 @@ export default function MainLobbyMenu({updatePhase, game_state}) {
         const user_id2 = (await (await fetch(`http://localhost:5044/api/user/get?id=${user_id}`)).json())['id'];
         console.log(user_id2);
 
+        const form = event.target;
+        const formData = new FormData(form);
+        var entries = Object.fromEntries(formData.entries());
+        console.log(entries);
+
+        const password = entries['password'];
+
         var requestOptions = {
             mode: 'cors',
             method: 'POST',
@@ -83,10 +90,11 @@ export default function MainLobbyMenu({updatePhase, game_state}) {
             body: JSON.stringify({ 
                 user_id: user_id2,
                 lobby_id: chosenLobby,
-                password: ""
+                password: password
             })
         };
-        await fetch('http://localhost:5044/api/user/updatelobby', requestOptions);
+        const data = await(await fetch('http://localhost:5044/api/user/updatelobby', requestOptions)).json();
+        console.log(data);  
         clearInterval(interval);
         updatePhase(LobbyMenu);
     }
@@ -125,6 +133,9 @@ export default function MainLobbyMenu({updatePhase, game_state}) {
                         </div>
                     )
                 })}
+
+                <input type='text' name='password' className="password"></input>
+                <label className="passwordlabel">Пароль: </label>
 
                 <button type='submit' id="UnderJoinLobby">Войти в лобби</button>
             </form>

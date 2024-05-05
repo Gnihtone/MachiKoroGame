@@ -57,6 +57,7 @@ namespace WebsocketServer.Game
 
         public void Start()
         {
+            IsStarted = true;
             nextPlayerIdx = random.Next(players.Count);
             UpdateMove();
 
@@ -84,7 +85,7 @@ namespace WebsocketServer.Game
 
         public bool Build(string name)
         {
-            if (builtSomething)
+            if (builtSomething || CurrentMove == MoveType.Income)
             {
                 return false;
             }
@@ -126,7 +127,7 @@ namespace WebsocketServer.Game
             {
                 int roll1 = random.Next(6) + 1;
                 int roll2 = random.Next(6) + 1;
-                LastRoll = roll1 + roll2;
+                LastRoll = (roll1 << 3) | roll2;
                 if (roll1 == roll2 && CurrentPlayer.ContinueOnDuble)
                 {
                     nextPlayerIdx = currentPlayerIdx;

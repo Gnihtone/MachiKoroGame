@@ -3,6 +3,7 @@ import introAnimationData from '../assets/First intro.json';
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 import {useRef} from 'react'
 import MainMenu from './MainMenu';
+import RejoinLobby from './RejoinLobby';
 
 
 export default function onOpenPage({ updatePhase }) {
@@ -17,7 +18,7 @@ export default function onOpenPage({ updatePhase }) {
                 onComplete={
                     () => {
                         introRef.current?.destroy();
-                        updatePhase(MainMenu);
+                        updatePhase(RejoinLobby);
                     }
                 }
             />

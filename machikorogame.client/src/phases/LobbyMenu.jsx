@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import './styles/LobbyMenu.css';
 import MainLobbyMenu from "./MainLobbyMenu";
 import GameBoard from "./GameBoard";
-
+ 
 function sendMessage(socket, type, message, game_state) {
     const user_id = game_state.state.user_id;
     var msg = {
         "id": user_id, 
-        "type": type,
+        "type": type, 
         "message": message
     }
     console.log(JSON.stringify(msg));

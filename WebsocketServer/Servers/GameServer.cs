@@ -3,6 +3,7 @@ using WebsocketServer.Models;
 using WebsocketServer.Game;
 using WebSocketSharp;
 using System.Text.Json;
+using System.Text;
 
 namespace WebsocketServer.Servers
 {
@@ -18,7 +19,7 @@ namespace WebsocketServer.Servers
             SendChanges(lobbies, lobbyId, type, msg);
         }
 
-        private void SendPlayerInfo()
+        private string GetPlayerInfoMsg()
         {
             Dictionary<string, int> buildings = new Dictionary<string, int>();
             foreach (var kv in board.availableCards)
@@ -33,7 +34,8 @@ namespace WebsocketServer.Servers
                 {
                     cards.Add(card.Key.Name, card.Value);
                 }
-                players.Add(new PlayerModel() {
+                players.Add(new PlayerModel()
+                {
                     Id = player.Id,
                     Money = player.Money,
                     Cards = cards,
@@ -47,20 +49,45 @@ namespace WebsocketServer.Servers
                 });
             }
 
-            BoardModel boardModel = new BoardModel() { 
+            BoardModel boardModel = new BoardModel()
+            {
                 CurrentPlayerId = board.CurrentPlayer.Id,
                 CurrentMoveType = (int)board.CurrentMove,
                 AvailableBuildings = buildings,
                 Players = players,
             };
-            string msg = JsonSerializer.Serialize(boardModel);
+            return JsonSerializer.Serialize(boardModel);
+        }
 
-            SendChanges(lobbies, lobbyId, "maininfo", msg);
+        private void UpdateLobbies()
+        {
+            foreach (GameServer cm in lobbies[lobbyId])
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{httpServer}/user/updatelobby");
+                request.Content = new StringContent($"{{\"user_id\": \"{cm.userId}\"}}", Encoding.UTF8, "application/json");
+                SendRequest(request);
+            }
+        }
+
+        private void SendPlayersInfoAll()
+        {
+            SendChanges(lobbies, lobbyId, "maininfo", GetPlayerInfoMsg());
+        }
+
+        private void SendPlayersInfo()
+        {
+            SendMsg("maininfo", GetPlayerInfoMsg());
         }
 
         private void SendWrongMsg()
         {
             SendMsg("wrong");
+        }
+
+        private void SendWinMsg()
+        {
+            SendChanges(lobbies, lobbyId, "win", board.CurrentPlayer.Id);
+            UpdateLobbies();
         }
 
         protected override void OnOpen()
@@ -91,17 +118,18 @@ namespace WebsocketServer.Servers
         {
             lobbies.TryAdd(lobbyId, new HashSet<Common>());
             lobbies[lobbyId].Add(this);
+            board.OnlinePlayers++;
             if (board.IsStarted)
             {
+                SendPlayersInfo();
                 return;
             }
             board.players.Add(new Player(userId!));
-            board.OnlinePlayers++;
-            if (board.OnlinePlayers == board.MaxPlayers)
+            if (board.OnlinePlayers == board.MaxPlayers && !board.IsStarted)
             {
                 SendChanges(lobbies, lobbyId, "start", "");
                 board.Start();
-                SendPlayerInfo();
+                SendPlayersInfoAll();
             }
         }
 
@@ -126,7 +154,7 @@ namespace WebsocketServer.Servers
             {
                 board.RollDices(int.Parse(lastMessage.message));
                 board.CurrentRollNum++;
-                SendAll("roll", $"{board.LastRoll}");
+                SendAll("roll", $"{((board.LastRoll >> 3) == 0 ? "" : board.LastRoll >> 3)} {board.LastRoll & 7}");
             }
             else
             {
@@ -142,7 +170,7 @@ namespace WebsocketServer.Servers
                 SendWrongMsg();
                 return;
             }
-            SendPlayerInfo();
+            SendPlayersInfoAll();
         }
 
         private bool HandleCommon()
@@ -160,6 +188,11 @@ namespace WebsocketServer.Servers
             if (!board.Build(lastMessage.message))
             {
                 SendWrongMsg();
+            }
+            Player player = board.CurrentPlayer; 
+            if (player.CanReroll && player.CanRollTwo && player.ContinueOnDuble && player.UpgradedShops)
+            {
+                SendWinMsg();
             }
         }
 

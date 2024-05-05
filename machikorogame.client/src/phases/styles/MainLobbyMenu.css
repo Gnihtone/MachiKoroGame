@@ -70,4 +70,17 @@ button.LobbyBtn {
     position: relative;
     top: 0px;
     margin-bottom: 10px;
+    height: 20px;
+}
+
+.password {
+    position: absolute;
+    top: 600px;
+    left: 500px;
+}
+
+.passwordlabel {
+    position: absolute;
+    top: 595px;
+    left: 430px;
 }

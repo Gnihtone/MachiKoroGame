@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import './styles/GameBoard.css';
 import MainLobbyMenu from "./MainLobbyMenu";
+import {useSound} from "use-sound";
+import VictoryMenu from "./VictoryMenu";
+import LoseMenu from "./LoseMenu";
 
 function sendMessage(socket, type, message, game_state) {
     const user_id = game_state.state.user_id;
@@ -148,8 +151,8 @@ function GameStage({stage, data, yourMove, socket, game_state}) {
 
 
 export default function GameBoard({updatePhase, game_state}) {
-    var socket = null;
-    const socket2 = useRef(null);
+    var socket: Object = {};
+    const socket2 = useRef(socket);
     const [isConnected, setIsConnected] = useState(false);
     
     var userId = "";
@@ -165,7 +168,56 @@ export default function GameBoard({updatePhase, game_state}) {
     const [lastRoll, setLastRoll] = useState(0);
     const [canRoll, setCanRoll] = useState(true);
 
-    const LeaveGame = useRef(null);
+    const [wrongSound] = useSound('../../public/sounds/wrong.mp3', {volume: 0.05});
+
+    const LeaveGame = useRef(() => {});
+
+    async function onMessage(event) {
+        console.log(`Got message: ${event.data}`);
+        var msg = JSON.parse(event.data);
+        if (msg['type'] == 'bad') {
+            LeaveGame.current();
+            return;
+        } else if (msg['type'] == 'wrong') {
+            wrongSound();
+            console.warn('something went wrong');
+        } else if (msg['type'] == 'hello') {
+            sendMessage(socket, "hello", "", game_state);
+        } else if (msg['type'] == 'maininfo') {
+            var data = JSON.parse(msg['message']);
+            var players = data['Players'];
+            setAvailableCards(data['AvailableBuildings']);
+            setPlayerData(players);
+            console.log(data['AvailableBuildings']);
+            players.forEach(player => {
+                if (player['Id'] == userId) {
+                    console.log(`Me:`);
+                    console.log(player);
+                    setYourData(player);
+                    setChosenPlayer(player);
+                    console.log(player);
+                    setCurrentMoney(player['Money']);
+                } else {
+                    console.log(`Other:`);
+                    console.log(player);
+                }
+            });
+            setCurrentPlayer(data['CurrentPlayerId']);
+            setCurrentStage(data['CurrentMoveType']);
+        } else if (msg['type'] == 'roll') {
+            setLastRoll(msg['message']);
+        } else if (msg['type'] == 'win') {
+            console.log(msg['message']);
+            console.log(userId);
+            if (msg['message'] == userId) {
+                (socket2.current as WebSocket).close(1000);
+                updatePhase(VictoryMenu);
+            } else {
+                (socket2.current as WebSocket).close(1000);
+                updatePhase(LoseMenu);
+            }
+        }
+    }
 
     useEffect(() => {
         if (!isConnected) {
@@ -179,55 +231,22 @@ export default function GameBoard({updatePhase, game_state}) {
                 if (userId == "") {
                     userId = await getUserId();
                 }
-
                 socket = new WebSocket('ws://127.0.0.1/Game');
                 setIsConnected(true);
 
                 setUserId(userId);
 
                 LeaveGame.current = () => {
-                    socket.close(1000, "Player has left lobby");
+                    (socket as WebSocket).close(1000, "Player has left lobby");
                     updatePhase(MainLobbyMenu);
                 }
 
-                socket.onopen = (event) => {
+                (socket as WebSocket).onopen = (event) => {
                     console.log("connected");
                 }
             
-                socket.onmessage = async (event) => {
-                    console.log(`Got message: ${event.data}`);
-                    var msg = JSON.parse(event.data);
-                    if (msg['type'] == 'bad') {
-                        LeaveGame();
-                        return;
-                    } else if (msg['type'] == 'wrong') {
-                        console.warn('something went wrong');
-                    } else if (msg['type'] == 'hello') {
-                        sendMessage(socket, "hello", "", game_state);
-                    } else if (msg['type'] == 'maininfo') {
-                        var data = JSON.parse(msg['message']);
-                        var players = data['Players'];
-                        setAvailableCards(data['AvailableBuildings']);
-                        setPlayerData(players);
-                        console.log(data['AvailableBuildings']);
-                        players.forEach(player => {
-                            if (player['Id'] == userId) {
-                                console.log(`Me:`);
-                                console.log(player);
-                                setYourData(player);
-                                setChosenPlayer(player);
-                                console.log(player);
-                                setCurrentMoney(player['Money']);
-                            } else {
-                                console.log(`Other:`);
-                                console.log(player);
-                            }
-                        });
-                        setCurrentPlayer(data['CurrentPlayerId']);
-                        setCurrentStage(data['CurrentMoveType']);
-                    } else if (msg['type'] == 'roll') {
-                        setLastRoll(msg['message']);
-                    }
+                (socket as WebSocket).onmessage = async (event) => {
+                    await onMessage(event);
                 }
 
                 socket2.current = socket;
@@ -236,10 +255,11 @@ export default function GameBoard({updatePhase, game_state}) {
             mainfunc();
         }
 
-        return LeaveGame;
+        return;
     }, [socket, setIsConnected, 
         setPlayerData, setYourData, userId, socket, 
-        setChosenPlayer, setAvailableCards, setUserId, setCurrentPlayer]);
+        setChosenPlayer, setAvailableCards, setUserId, setCurrentPlayer,
+        ]);
 
     function changePlayer(player) {
         setCurrentMoney(player['Money']);
@@ -301,7 +321,7 @@ export default function GameBoard({updatePhase, game_state}) {
 
             <div id="ChangePlayer">
                 {
-                    playerData.map((value, idx) => {
+                    playerData.map((value: Object, idx) => {
                         return (
                             <div className="rad1">
                                 <input type='radio' className="playerCheck" checked={chosenPlayer == value} onChange={() => changePlayer(value)}></input>
